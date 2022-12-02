@@ -2,6 +2,7 @@
 
 import sys
 import subprocess
+import os
 from pathlib import Path
 from PySide6.QtWidgets import (
     QLineEdit,
@@ -77,7 +78,7 @@ def run(command: list[str], text=True) -> subprocess.Popen:
         text = text
     )
 
-def checkPassword(archivepath: Path):
+def checkPassword(archivepath: Path) -> SecretStr | None:
     password = None
     with run(
         [
@@ -86,31 +87,62 @@ def checkPassword(archivepath: Path):
             f"{archivepath}"
         ],
         text = False
-    ) as extract:
-        out, err = extract.communicate(b"TEST\n")
+    ) as ex:
+        out, err = ex.communicate(b"TEST\n")
         err = err.decode("utf-8")
         if "Cannot open encrypted archive. Wrong password?" in err:
             password = Password(archivepath).getPassword()
     return password
 
-def extract(archivepath: Path, password: SecretStr):
-    if archivepath.suffix:
-        folderpath  = archivepath.with_suffix('')
-    else:
-        folderpath = archivepath.with_suffix('.d')
+def extractzip(archivepath: Path, folderpath: Path, password: SecretStr):
     with run(
         [
-            "7z",
-            "x",
-            "-bsp1",
-            f"-o{folderpath}",
-            f"{archivepath}"
+            "unzip",
+            "-d",
+            str(folderpath),
+            str(archivepath)
         ]
-    ) as extract:
-        out, err = extract.communicate("\n" if password is None else f"{password.get_secret_value()}\n")
-        sys.stdout.write(writeblock("7z STDOUT", out))
+    ) as ex:
+        out, err = ex.communicate("\n" if password is None else f"{password.get_secret_value()}\n")
+        sys.stdout.write(writeblock("unzip STDOUT", out))
         if err:
-            sys.stderr.write(writeblock("7z STDERR", err))
+            sys.stderr.write(writeblock("unzip STDERR", err))
+
+def extract(archivepath: Path, password: SecretStr):
+    folderpath = archivepath
+    if folderpath.suffix:
+        if folderpath.suffix[1:].isdigit():
+            folderpath = folderpath.with_suffix('')
+        folderpath  = folderpath.with_suffix('')
+    else:
+        folderpath = folderpath.with_suffix('.d')
+    if archivepath.suffix == ".zip":
+        return extractzip(
+            archivepath,
+            folderpath,
+            password
+        )
+    if password:
+        os.system(subprocess.list2cmdline(
+            [
+                "7z",
+                "x",
+                "-bsp1",
+                f"-p{password.get_secret_value()}",
+                f"-o{folderpath}",
+                f"{archivepath}"
+            ]
+        ))
+    else:
+        os.system(subprocess.list2cmdline(
+            [
+                "7z",
+                "x",
+                "-bsp1",
+                f"-o{folderpath}",
+                f"{archivepath}"
+            ]
+        ))
 
 def main(argv : list[str] = sys.argv):
     if len(argv) == 1:
