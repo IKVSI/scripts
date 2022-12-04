@@ -73,24 +73,22 @@ class Password(QWidget):
 def createarchive(archname: Path, files: tuple[Path], password: SecretStr):
     print(f"Archive name: ({archname})")
     print("Have password: {}".format("Yes" if password else "No"))
-    print("Add paths:\n    {}".format("\n    ".join(str(i) for i in files)))
+    files = (str(i) for i in files)
+    print("Add paths:\n    {}".format("\n    ".join(files)))
+    command = [
+        "7z",
+        "a",
+        "-t7z",
+        "-mx=9",
+        "-snl",
+        "-v4g",
+        str(archname),
+        *files
+    ]
     if password:
-        os.system(
-            subprocess.list2cmdline(
-                [
-                    "7z",
-                    "a",
-                    "-t7z",
-                    "-mx=9",
-                    "-mhe=on",
-                    "-snl",
-                    "-v4g",
-                    f"-p{password.get_secret_value()}",
-                    str(archname),
-                    *(str(i) for i in files)
-                ]
-            )
-        )
+        command.insert(6, f"-p{password.get_secret_value()}")
+        command.insert(6, "-mhe=on")
+    os.system(subprocess.list2cmdline(command))
     
 
 def main(argv : list[str] = sys.argv):
