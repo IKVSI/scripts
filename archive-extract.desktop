@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Archive Extract
+Comment=Archive Extract
+GenericName=Archiver
+Exec=python3 /home/ikvsi/GIT/scripts/7zex.py %F
+Icon=7zex-archive-out
+Type=Application
+StartupWMClass=7z
+Categories=Utility;Compression
+MimeType=application/x-7z-compressed;application/zip;application/vnd.rar
