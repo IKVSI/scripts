@@ -4,6 +4,7 @@ Comment=Archive Compress
 GenericName=Archiver
 Exec=python3 /home/ikvsi/GIT/scripts/7zar.py %F
 Icon=7zar-archive-in
+Terminal=true
 Type=Application
 StartupWMClass=7z
 Categories=Utility;Compression
