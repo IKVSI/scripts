@@ -73,7 +73,7 @@ class Password(QWidget):
 def createarchive(archname: Path, files: tuple[Path], password: SecretStr):
     print(f"Archive name: ({archname})")
     print("Have password: {}".format("Yes" if password else "No"))
-    files = (str(i) for i in files)
+    files = tuple(str(i) for i in files)
     print("Add paths:\n    {}".format("\n    ".join(files)))
     command = [
         "7z",
@@ -81,7 +81,7 @@ def createarchive(archname: Path, files: tuple[Path], password: SecretStr):
         "-t7z",
         "-mx=9",
         "-snl",
-        "-v4g",
+        "-v2000m",
         str(archname),
         *files
     ]
@@ -106,6 +106,7 @@ def main(argv : list[str] = sys.argv):
         archname = folder.with_suffix(".7z")
     password = Password(archname).getPassword()
     createarchive(archname, argv, password)
+    input("ЖМИ!")
 
 if __name__ == "__main__":
     main()

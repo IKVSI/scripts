@@ -153,7 +153,7 @@ def main(argv : list[str] = sys.argv):
         extract(archivepath, password)
     else:
         raise FileNotFoundError(f"No file \"{archivepath}\" !!!")
-        
+    input("ЖМИ!")
 
 if __name__ == "__main__":
     main()
