@@ -1,5 +1,6 @@
 #!/bin/bash
-sudo ln -s ./7zar.py /usr/bin/7zar
-sudo ln -s ./7zex.py /usr/bin/7zex
-sudo cp ./*.desktop ~/.local/share/applications/
-sudo cp ./*.png ~/.local/share/icons/
+ln -s ./7zar.py ~/.local/bin/7zar
+ln -s ./7zex.py ~/.local/bin/7zex
+cp ./*.desktop ~/.local/share/applications/
+cp ./icons/*.png ~/.local/share/icons/
+cp ./autostart/* ~/.config/autostart/
