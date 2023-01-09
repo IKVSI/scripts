@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=sh -c "sleep 10 && /opt/Telegram/Telegram -startintray &"
+Exec=sh -c "sleep 15 && /opt/Telegram/Telegram -startintray &"
 Icon=dialog-scripts
 Name=Telegram Desktop Autostart
 Path=
